@@ -26,6 +26,8 @@ public class Practice extends AppCompatActivity{
 //                internt.putExtra("HELLO", result);
                 startActivity(intent);
 
+                // Arsalan wrote this line
+
             }
         });
 
