@@ -9,8 +9,6 @@ import android.widget.Toast;
 
 public class Practice extends AppCompatActivity{
 
-    Button button2;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +21,22 @@ public class Practice extends AppCompatActivity{
                 Toast.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(Practice.this, Login.class);
-//                internt.putExtra("HELLO", result);
+//                internt.putExtra("Hi Zainab :)", result);
+                startActivity(intent);
+
+                // Arsalan wrote this line
+
+            }
+        });
+
+        Button button5 = (Button) findViewById(R.id.button5);
+        button5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(Practice.this, Login.class);
+//                internt.putExtra("Hotmap", result);
                 startActivity(intent);
 
                 // Arsalan wrote this line
