@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -97,13 +98,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json);
+        googleMap.setMapStyle(style);
+
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        LatLng lahore = new LatLng(31.5204, 74.3587);
+        mMap.addMarker(new MarkerOptions().position(lahore).title("Marker at Lahore"));
         addHeatMap();
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lahore,12.0f));
     }
 
 
@@ -113,14 +117,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 //        List<LatLng> list = null;
 
         ArrayList<WeightedLatLng> list = new ArrayList<WeightedLatLng>();
-        for (double i = 0; i < 4; i++) {
-            double lat = -37.1886 + i;
-            double lng = 145.708 + i;
+        for (double i = 0; i < 3; i++) {
+            double lat = 31.5204 + (i * 0.01);
+            double lng = 74.3587 + (i * 0.01);
             LatLng a = new LatLng(lat,lng);
-            WeightedLatLng b = new WeightedLatLng(a, 50.0);
+            WeightedLatLng b = new WeightedLatLng(a, 1.0);
             list.add(b);
 
-            mProvider = new HeatmapTileProvider.Builder().weightedData(list).radius((int)(50-(i* 10))).build();
+            mProvider = new HeatmapTileProvider.Builder().weightedData(list).radius((int)(50-(i * 0.10))).build();
             mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
         }
 
