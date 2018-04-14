@@ -113,20 +113,22 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 //        List<LatLng> list = null;
 
         ArrayList<WeightedLatLng> list = new ArrayList<WeightedLatLng>();
-        for (int i = 0; i < 1; i++) {
-            double lat = -37.1886;
-            double lng = 145.708;
+        for (double i = 0; i < 4; i++) {
+            double lat = -37.1886 + i;
+            double lng = 145.708 + i;
             LatLng a = new LatLng(lat,lng);
             WeightedLatLng b = new WeightedLatLng(a, 50.0);
             list.add(b);
+
+            mProvider = new HeatmapTileProvider.Builder().weightedData(list).radius((int)(50-(i* 10))).build();
+            mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
         }
 
         // Create a heat map tile provider, passing it the latlngs of the police stations.
 //        mProvider = new HeatmapTileProvider.Builder().weightedData(list).build();
-        mProvider = new HeatmapTileProvider.Builder().weightedData(list).radius(50).build();
+
 
         // Add a tile overlay to the map, using the heat map tile provider.
-        mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
     }
 
 
