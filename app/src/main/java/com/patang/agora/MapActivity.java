@@ -119,9 +119,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         // overlay attempt
 
-        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-            @Override
-            public void onCameraIdle() {
+//        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+//            @Override
+//            public void onCameraIdle() {
 
                 LatLng mLatLngNetwork = new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude);
                 VisibleRegion visibleRegion = mMap.getProjection().getVisibleRegion();
@@ -136,8 +136,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         .transparency(0.68f);
                 mMap.addGroundOverlay(groundOverlayOptions);
 
-            }
-        });
+//            }
+//        });
 
     }
 
