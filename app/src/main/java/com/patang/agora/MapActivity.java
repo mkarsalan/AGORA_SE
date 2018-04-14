@@ -1,6 +1,8 @@
 package com.patang.agora;
 
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,10 +20,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
@@ -105,9 +112,33 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         // Add a marker in Sydney and move the camera
         LatLng lahore = new LatLng(31.5204, 74.3587);
-        mMap.addMarker(new MarkerOptions().position(lahore).title("Marker at Lahore"));
-        addHeatMap();
+        mMap.addMarker(new MarkerOptions().position(lahore).title("Lahore"));
+
+//        addHeatMap();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lahore,12.0f));
+
+        // overlay attempt
+
+        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+
+                LatLng mLatLngNetwork = new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude);
+                VisibleRegion visibleRegion = mMap.getProjection().getVisibleRegion();
+                LatLng topLeft = visibleRegion.farLeft;
+                LatLng bottomLeft = visibleRegion.nearLeft;
+                LatLng topRight = visibleRegion.farRight;
+                LatLng bottomRight = visibleRegion.nearRight;
+                LatLngBounds latLngBounds = new LatLngBounds.Builder().include(mLatLngNetwork).include(topLeft).include(bottomLeft).include(topRight).include(bottomRight).build();
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.inter);
+                BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
+                GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(bitmapDescriptor).positionFromBounds(latLngBounds)
+                        .transparency(0.68f);
+                mMap.addGroundOverlay(groundOverlayOptions);
+
+            }
+        });
+
     }
 
 
@@ -117,11 +148,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 //        List<LatLng> list = null;
 
         ArrayList<WeightedLatLng> list = new ArrayList<WeightedLatLng>();
-        for (double i = 0; i < 3; i++) {
+        for (double i = 0; i < 10; i++) {
             double lat = 31.5204 + (i * 0.01);
             double lng = 74.3587 + (i * 0.01);
             LatLng a = new LatLng(lat,lng);
-            WeightedLatLng b = new WeightedLatLng(a, 1.0);
+            WeightedLatLng b = new WeightedLatLng(a, 0.1);
             list.add(b);
 
             mProvider = new HeatmapTileProvider.Builder().weightedData(list).radius((int)(50-(i * 0.10))).build();
