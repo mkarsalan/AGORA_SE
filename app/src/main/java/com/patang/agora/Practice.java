@@ -35,7 +35,7 @@ public class Practice extends AppCompatActivity{
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(Practice.this, Login.class);
+                Intent intent = new Intent(Practice.this, Heatmap.class);
 //                internt.putExtra("Hotmap", result);
                 startActivity(intent);
 
