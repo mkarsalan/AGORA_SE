@@ -93,16 +93,48 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mapFragment.getMapAsync(this);
     }
 
+    public void interpolatePoints(LatLng Pos1, LatLng Pos2, LatLng Pos3, double Intensity1, double Intensity2, double Intensity3){
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+        int max_latitude = Math.max(Math.max((int) (Pos1.latitude * 10000), (int) (Pos2.latitude * 10000)), (int) (Pos3.latitude * 10000));
+        int min_latitude = Math.min(Math.min((int) (Pos1.latitude * 10000), (int) (Pos2.latitude * 10000)), (int) (Pos3.latitude * 10000));
+        int max_longitude = Math.max(Math.max((int) (Pos1.longitude * 10000), (int) (Pos2.longitude * 10000)), (int) (Pos3.longitude * 10000));
+        int min_longitude = Math.min(Math.min((int) (Pos1.longitude * 10000), (int) (Pos2.longitude * 10000)), (int) (Pos3.longitude * 10000));
+
+        double x1 = ((Pos1.longitude * 10000) - min_longitude) / 10;
+        double x2 = ((Pos2.longitude * 10000) - min_longitude) / 10;
+        double x3 = ((Pos3.longitude * 10000) - min_longitude) / 10;
+        double y1 = (max_latitude - (Pos1.latitude * 10000)) / 10;
+        double y2 = (max_latitude - (Pos2.latitude * 10000)) / 10;
+        double y3 = (max_latitude - (Pos3.latitude * 10000)) / 10;
+
+        int heightBitmap = (max_latitude - min_latitude) / 10;
+        int widthBitmap = (max_longitude - min_longitude) / 10;
+
+        Bitmap myBitmap = Bitmap.createBitmap(widthBitmap, heightBitmap, Bitmap.Config.ARGB_8888);
+        for (int x = 0; x < widthBitmap; x++) {
+            for (int y = 0; y < heightBitmap; y++) {
+                double weight1 = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
+                double weight2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
+                double weight3 = 1 - weight1 - weight2;
+
+                if ((weight1 >= 0 && weight1 <= 1) && (weight2 >= 0 && weight2 <= 1) && (weight3 >= 0 && weight3 <= 1)) {
+                    myBitmap.setPixel(x, y, Color.argb(255, (int) (weight1 * 255), (int) (weight2 * 255), (int) (weight3 * 255)));
+                } else {
+//                        myBitmap.setPixel(x, y, Color.argb(255, 255,255,255));
+                }
+            }
+        }
+        LatLngBounds PosBounds = new LatLngBounds(
+                new LatLng(min_latitude * 0.0001, min_longitude * 0.0001),       // South west corner
+                new LatLng(max_latitude * 0.0001, max_longitude * 0.0001));      // North east corner
+
+        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(myBitmap);
+        GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(bitmapDescriptor).positionFromBounds(PosBounds)
+                .transparency(0.5f);
+
+        mMap.addGroundOverlay(groundOverlayOptions);
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json);
@@ -119,25 +151,39 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         // overlay attempt
 
-//        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-//            @Override
-//            public void onCameraIdle() {
 
-                LatLng mLatLngNetwork = new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude);
-                VisibleRegion visibleRegion = mMap.getProjection().getVisibleRegion();
-                LatLng topLeft = visibleRegion.farLeft;
-                LatLng bottomLeft = visibleRegion.nearLeft;
-                LatLng topRight = visibleRegion.farRight;
-                LatLng bottomRight = visibleRegion.nearRight;
-                LatLngBounds latLngBounds = new LatLngBounds.Builder().include(mLatLngNetwork).include(topLeft).include(bottomLeft).include(topRight).include(bottomRight).build();
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.inter);
-                BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
-                GroundOverlayOptions groundOverlayOptions = new GroundOverlayOptions().image(bitmapDescriptor).positionFromBounds(latLngBounds)
-                        .transparency(0.68f);
-                mMap.addGroundOverlay(groundOverlayOptions);
+        double[] N = {31.4704,31.5799,31.4798,31.5525,31.4488,31.5879};
+        double[] E = {74.4108,74.3561,74.2802,74.3381,74.2701,74.3151};
+        double[] value = {0.23,0.34,0.45,0.10,0.60,0.90};
+        double[] col = {0.23,0.34,0.45,0.10,0.60,0.90};
 
-//            }
-//        });
+
+        LatLng Pos1 = new LatLng(31.4704, 74.4108);
+        LatLng Pos2 = new LatLng(31.5799, 74.3561);
+        LatLng Pos3 = new LatLng(31.4798, 74.2802);
+        LatLng Pos4 = new LatLng(31.5525, 74.3381);
+        LatLng Pos5 = new LatLng(31.4488, 74.2701);
+        LatLng Pos6 = new LatLng(31.5879, 74.3151);
+
+        double Intensity1 = 0.5;
+        double Intensity2 = 0.5;
+        double Intensity3 = 0.5;
+        double Intensity4 = 0.5;
+        double Intensity5 = 0.5;
+        double Intensity6 = 0.5;
+
+
+        mMap.addMarker(new MarkerOptions().position(Pos1).title("Pos: 1, Lat: " + Pos1.latitude + ", Lng: " + Pos1.longitude));
+        mMap.addMarker(new MarkerOptions().position(Pos2).title("Pos: 2, Lat: " + Pos2.latitude + ", Lng: " + Pos2.longitude));
+        mMap.addMarker(new MarkerOptions().position(Pos3).title("Pos: 3, Lat: " + Pos3.latitude + ", Lng: " + Pos3.longitude));
+        mMap.addMarker(new MarkerOptions().position(Pos4).title("Pos: 4, Lat: " + Pos4.latitude + ", Lng: " + Pos4.longitude));
+        mMap.addMarker(new MarkerOptions().position(Pos5).title("Pos: 5, Lat: " + Pos5.latitude + ", Lng: " + Pos5.longitude));
+        mMap.addMarker(new MarkerOptions().position(Pos6).title("Pos: 6, Lat: " + Pos6.latitude + ", Lng: " + Pos6.longitude));
+
+        interpolatePoints(Pos1,Pos2,Pos3,Intensity1,Intensity2,Intensity3);
+        interpolatePoints(Pos6,Pos2,Pos3,Intensity6,Intensity2,Intensity3);
+        interpolatePoints(Pos1,Pos5,Pos3,Intensity1,Intensity5,Intensity3);
+
 
     }
 
