@@ -65,14 +65,16 @@
                 android:text="Register User"
                 android:textAllCaps="false" />
 
-            <TextView
+            <Button
                 android:id="@+id/textViewSignin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
+                android:layout_gravity="center"
+                android:layout_margin="7dp"
+                android:background="@drawable/rounded_button_transparent"
                 android:text="Already a user? Sign In."
                 android:textAlignment="center"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+                android:textAllCaps="false" />
 
 
         </LinearLayout>
