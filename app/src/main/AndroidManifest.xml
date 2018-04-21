@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.patang.agora">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!--
@@ -49,7 +48,8 @@
 
         <activity
             android:name=".MapActivity"
-            android:label="@string/title_activity_map"></activity>
+            android:label="@string/title_activity_map" />
+        <activity android:name=".signin"></activity>
     </application>
 
 </manifest>

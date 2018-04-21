@@ -93,7 +93,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mapFragment.getMapAsync(this);
     }
 
-    public void interpolatePoints(LatLng Pos1, LatLng Pos2, LatLng Pos3, double Intensity1, double Intensity2, double Intensity3){
+    @Override
+    public void onBackPressed(){
+
+    }
+
+    public void interpolatePoints(LatLng Pos1, LatLng Pos2, LatLng Pos3, int color1, int color2, int color3){
 
         int max_latitude = Math.max(Math.max((int) (Pos1.latitude * 10000), (int) (Pos2.latitude * 10000)), (int) (Pos3.latitude * 10000));
         int min_latitude = Math.min(Math.min((int) (Pos1.latitude * 10000), (int) (Pos2.latitude * 10000)), (int) (Pos3.latitude * 10000));
@@ -117,8 +122,32 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 double weight2 = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3));
                 double weight3 = 1 - weight1 - weight2;
 
+                int A1 = (int)((double)((color1 >> 24) & 0xff) * weight1);
+                int R1 = (int)((double)((color1 >> 16) & 0xff) * weight1);
+                int G1 = (int)((double)((color1 >>  8) & 0xff) * weight1);
+                int B1 = (int)((double)((color1      ) & 0xff) * weight1);
+
+                int A2 = (int)((double)((color2 >> 24) & 0xff) * weight2);
+                int R2 = (int)((double)((color2 >> 16) & 0xff) * weight2);
+                int G2 = (int)((double)((color2 >>  8) & 0xff) * weight2);
+                int B2 = (int)((double)((color2      ) & 0xff) * weight2);
+
+                int A3 = (int)((double)((color3 >> 24) & 0xff) * weight3);
+                int R3 = (int)((double)((color3 >> 16) & 0xff) * weight3);
+                int G3 = (int)((double)((color3 >>  8) & 0xff) * weight3);
+                int B3 = (int)((double)((color3      ) & 0xff) * weight3);
+
+                int A = A1 + A2 + A3;
+                int R = R1 + R2 + R3;
+                int B = B1 + B2 + B3;
+                int G = G1 + G2 + G3;
+
+                int color = (A & 0xff) << 24 | (R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff);
+
                 if ((weight1 >= 0 && weight1 <= 1) && (weight2 >= 0 && weight2 <= 1) && (weight3 >= 0 && weight3 <= 1)) {
-                    myBitmap.setPixel(x, y, Color.argb(255, (int) (weight1 * 255), (int) (weight2 * 255), (int) (weight3 * 255)));
+                    //myBitmap.setPixel(x, y, (int)((double)color1*weight1) + (int)((double)color2*weight2) + (int)((double)color3*weight3) );
+                    myBitmap.setPixel(x, y, color );
+                    //myBitmap.setPixel(x, y, Barycentric(x, y, (int)x1, (int)y1, (int)x2, (int)y2, (int)x3, (int)y3, color1, color2, color3) );
                 } else {
 //                        myBitmap.setPixel(x, y, Color.argb(255, 255,255,255));
                 }
@@ -135,6 +164,19 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap.addGroundOverlay(groundOverlayOptions);
     }
 
+    public int tempToColor(double temp, int alpha){
+        int min = -10;
+        int max = 60;
+        max = max - min;
+
+        int c = (int)( ((temp - min)*255) / (double)max );
+        int colour  = Color.argb(alpha,c,c,c);
+
+
+        return colour;
+
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json);
@@ -149,15 +191,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 //        addHeatMap();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lahore,12.0f));
 
-        // overlay attempt
-
-
-        double[] N = {31.4704,31.5799,31.4798,31.5525,31.4488,31.5879};
-        double[] E = {74.4108,74.3561,74.2802,74.3381,74.2701,74.3151};
-        double[] value = {0.23,0.34,0.45,0.10,0.60,0.90};
-        double[] col = {0.23,0.34,0.45,0.10,0.60,0.90};
-
-
         LatLng Pos1 = new LatLng(31.4704, 74.4108);
         LatLng Pos2 = new LatLng(31.5799, 74.3561);
         LatLng Pos3 = new LatLng(31.4798, 74.2802);
@@ -165,12 +198,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         LatLng Pos5 = new LatLng(31.4488, 74.2701);
         LatLng Pos6 = new LatLng(31.5879, 74.3151);
 
-        double Intensity1 = 0.5;
-        double Intensity2 = 0.5;
-        double Intensity3 = 0.5;
-        double Intensity4 = 0.5;
-        double Intensity5 = 0.5;
-        double Intensity6 = 0.5;
+
+        int color1  = Color.argb(100,0,0,255);
+        int color2  = Color.argb(100,0,255,0);
+        int color3  = Color.argb(0,255,0,255);
+        int color4  = Color.argb(100,0,255,255);
+        int color5  = Color.argb(100,255,255,0);
+        int color6  = Color.argb(255,255,0,255);
 
 
         mMap.addMarker(new MarkerOptions().position(Pos1).title("Pos: 1, Lat: " + Pos1.latitude + ", Lng: " + Pos1.longitude));
@@ -180,13 +214,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap.addMarker(new MarkerOptions().position(Pos5).title("Pos: 5, Lat: " + Pos5.latitude + ", Lng: " + Pos5.longitude));
         mMap.addMarker(new MarkerOptions().position(Pos6).title("Pos: 6, Lat: " + Pos6.latitude + ", Lng: " + Pos6.longitude));
 
-        interpolatePoints(Pos1,Pos2,Pos3,Intensity1,Intensity2,Intensity3);
-        interpolatePoints(Pos6,Pos2,Pos3,Intensity6,Intensity2,Intensity3);
-        interpolatePoints(Pos1,Pos5,Pos3,Intensity1,Intensity5,Intensity3);
+        interpolatePoints(Pos1,Pos2,Pos3,tempToColor(40, 255),tempToColor(60, 255),tempToColor(-9, 255));
+        interpolatePoints(Pos6,Pos2,Pos3,color6,color2,color3);
+        interpolatePoints(Pos1,Pos5,Pos3,color1,color5,color3);
 
 
     }
-
 
 
 
