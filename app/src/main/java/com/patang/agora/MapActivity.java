@@ -225,12 +225,22 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         LatLng p12 = new LatLng(31.5351, 74.3206);
 
 
-        int color1  = Color.argb(100,0,0,255);
-        int color2  = Color.argb(100,0,255,0);
-        int color3  = Color.argb(0,255,0,255);
-        int color4  = Color.argb(100,0,255,255);
-        int color5  = Color.argb(100,255,255,0);
-        int color6  = Color.argb(255,255,0,255);
+        int color1  = Color.argb(255,255,0,0);
+        int color2  = Color.argb(255,255,0,0);
+        int color3  = Color.argb(255,255,0,0);
+        int color4  = Color.argb(255,255,0,0);
+        int color5  = Color.argb(255,255,0,0);
+        int color6  = Color.argb(255,255,0,0);
+        int color7  = Color.argb(255,255,0,0);
+        int color8  = Color.argb(255,255,0,0);
+        int color9  = Color.argb(255,255,0,0);
+        int color10  = Color.argb(255,255,0,0);
+        int color11  = Color.argb(255,255,0,0);
+        int color12  = Color.argb(255,0,255,0);
+        int color13  = Color.argb(255,0,255,0);
+        int color14  = Color.argb(255,255,0,0);
+        int color15  = Color.argb(255,0,255,0);
+        int color16  = Color.argb(255,255,255,0);
 
 //        double longitude
 
@@ -238,42 +248,42 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap.addMarker(new MarkerOptions().position(p1).title("Pos: 1, Lat: " + p1.latitude + ", Lng: " + p1.longitude));
         mMap.addMarker(new MarkerOptions().position(p2).title("Pos: 2, Lat: " + p2.latitude + ", Lng: " + p2.longitude));
         mMap.addMarker(new MarkerOptions().position(p3).title("Pos: 3, Lat: " + p3.latitude + ", Lng: " + p3.longitude));
-        mMap.addMarker(new MarkerOptions().position(p11).title("Pos: 4, Lat: " + p11.latitude + ", Lng: " + p11.longitude));
-        mMap.addMarker(new MarkerOptions().position(p10).title("Pos: 5, Lat: " + p10.latitude + ", Lng: " + p10.longitude));
-        mMap.addMarker(new MarkerOptions().position(p5).title("Pos: 6, Lat: " + p5.latitude + ", Lng: " + p5.longitude));
-        mMap.addMarker(new MarkerOptions().position(p15).title("Pos: 7, Lat: " + p15.latitude + ", Lng: " + p15.longitude));
-        mMap.addMarker(new MarkerOptions().position(p13).title("Pos: 8, Lat: " + p13.latitude + ", Lng: " + p13.longitude));
-        mMap.addMarker(new MarkerOptions().position(p8).title("Pos: 9, Lat: " + p8.latitude + ", Lng: " + p8.longitude));
-        mMap.addMarker(new MarkerOptions().position(p4).title("Pos: 10, Lat: " + p4.latitude + ", Lng: " + p4.longitude));
-        mMap.addMarker(new MarkerOptions().position(p6).title("Pos: 11, Lat: " + p6.latitude + ", Lng: " + p6.longitude));
-        mMap.addMarker(new MarkerOptions().position(p14).title("Pos: 12, Lat: " + p14.latitude + ", Lng: " + p14.longitude));
-        mMap.addMarker(new MarkerOptions().position(p7).title("Pos: 13, Lat: " + p7.latitude + ", Lng: " + p7.longitude));
-        mMap.addMarker(new MarkerOptions().position(p9).title("Pos: 14, Lat: " + p9.latitude + ", Lng: " + p9.longitude));
-        mMap.addMarker(new MarkerOptions().position(p12).title("Pos: 15, Lat: " + p12.latitude + ", Lng: " + p12.longitude));
+        mMap.addMarker(new MarkerOptions().position(p11).title("Pos: 11, Lat: " + p11.latitude + ", Lng: " + p11.longitude));
+        mMap.addMarker(new MarkerOptions().position(p10).title("Pos: 10, Lat: " + p10.latitude + ", Lng: " + p10.longitude));
+        mMap.addMarker(new MarkerOptions().position(p5).title("Pos: 5, Lat: " + p5.latitude + ", Lng: " + p5.longitude));
+        mMap.addMarker(new MarkerOptions().position(p15).title("Pos: 15, Lat: " + p15.latitude + ", Lng: " + p15.longitude));
+        mMap.addMarker(new MarkerOptions().position(p13).title("Pos: 13, Lat: " + p13.latitude + ", Lng: " + p13.longitude));
+        mMap.addMarker(new MarkerOptions().position(p8).title("Pos: 8, Lat: " + p8.latitude + ", Lng: " + p8.longitude));
+        mMap.addMarker(new MarkerOptions().position(p4).title("Pos: 4, Lat: " + p4.latitude + ", Lng: " + p4.longitude));
+        mMap.addMarker(new MarkerOptions().position(p6).title("Pos: 6, Lat: " + p6.latitude + ", Lng: " + p6.longitude));
+        mMap.addMarker(new MarkerOptions().position(p14).title("Pos: 14, Lat: " + p14.latitude + ", Lng: " + p14.longitude));
+        mMap.addMarker(new MarkerOptions().position(p7).title("Pos: 7, Lat: " + p7.latitude + ", Lng: " + p7.longitude));
+        mMap.addMarker(new MarkerOptions().position(p9).title("Pos: 9, Lat: " + p9.latitude + ", Lng: " + p9.longitude));
+        mMap.addMarker(new MarkerOptions().position(p12).title("Pos: 12, Lat: " + p12.latitude + ", Lng: " + p12.longitude));
 
 //
 //        interpolatePoints(p1,p2,p3,tempToColor(40, 255),tempToColor(60, 255),tempToColor(-9, 255));
 //        interpolatePoints(p5,p2,p3,color6,color2,color3);
 //        interpolatePoints(p1,p10,p3,color1,color5,color3);
 
-        interpolatePoints(p10,p11,p5,color1,color1,color1);
-        interpolatePoints(p14,p6,p12,color1,color1,color1);
-        interpolatePoints(p12,p6,p8,color1,color1,color1);
-        interpolatePoints(p8,p12,p2,color1,color1,color1);
-        interpolatePoints(p3,p12,p3,color1,color1,color1);
-        interpolatePoints(p3,p12,p15,color1,color1,color1);
-        interpolatePoints(p15,p3,p7,color1,color1,color1);
-        interpolatePoints(p15,p7,p1,color1,color1,color1);
-        interpolatePoints(p1,p15,p9,color1,color1,color1);
-        interpolatePoints(p9,p4,p1,color1,color1,color1);
-        interpolatePoints(p5,p9,p4,color1,color1,color1);
-        interpolatePoints(p11,p5,p15,color1,color1,color1);
-        interpolatePoints(p15,p11,p12,color1,color1,color1);
-        interpolatePoints(p12,p3,p2,color1,color1,color1);
-        interpolatePoints(p10,p5,p4,color1,color1,color1);
-        interpolatePoints(p15,p5,p9,color1,color1,color1);
-        interpolatePoints(p11,p12,p10,color1,color1,color1);
-        interpolatePoints(p10,p12,p14,color1,color1,color1);
+        interpolatePoints(p10,p11,p5,color10,color11,color5);
+        interpolatePoints(p14,p6,p12,color14,color6,color12);
+        interpolatePoints(p12,p6,p8,color12,color6,color8);
+        interpolatePoints(p8,p12,p2,color8,color12,color2);
+        interpolatePoints(p3,p12,p3,color3,color12,color3);
+        interpolatePoints(p3,p12,p15,color3,color12,color15);
+        interpolatePoints(p15,p3,p7,color15,color3,color7);
+        interpolatePoints(p15,p7,p1,color15,color7,color1);
+        interpolatePoints(p1,p15,p9,color1,color15,color9);
+        interpolatePoints(p9,p4,p1,color9,color4,color1);
+        interpolatePoints(p5,p9,p4,color5,color9,color4);
+        interpolatePoints(p11,p5,p15,color11,color5,color15);
+        interpolatePoints(p15,p11,p12,color15,color11,color12);
+        interpolatePoints(p12,p3,p2,color12,color3,color2);
+        interpolatePoints(p10,p5,p4,color10,color5,color4);
+        interpolatePoints(p15,p5,p9,color15,color5,color9);
+        interpolatePoints(p11,p12,p10,color11,color12,color10);
+        interpolatePoints(p10,p12,p14,color10,color12,color14);
 
 
 
