@@ -7,8 +7,8 @@ package com.patang.agora;
 public class Reading {
     public String Date;
     public String Time;
-    public Integer Reading;
-    public Integer alpha;
+    public Double Reading;
+    public Double alpha;
 
     public Reading(){
 

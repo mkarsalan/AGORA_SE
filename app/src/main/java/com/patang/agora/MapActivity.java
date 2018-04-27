@@ -433,30 +433,51 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                             i++;
                         }
 
+                        mMap.clear();
                         for (int j = 1; j < latLng.length - 1; j++) {
                             mMap.addMarker(new MarkerOptions().position(latLng[j]).title("Pos: " + j + ", Lat: " + latLng[j].latitude + ", Lng: " + latLng[j].longitude));
                         }
 
-                        mMap.clear();
+                        FirebaseDatabase.getInstance().getReference().child("Regions").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Integer i = 1;
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Regions regions = snapshot.getValue(Regions.class);
+                                    System.out.println(i + " Node1 -> " + regions.Node1);
+                                    System.out.println(i + " Node2 -> " + regions.Node2);
+                                    System.out.println(i + " Node3 -> " + regions.Node3);
 
-                        interpolatePoints(latLng[10],latLng[11],latLng[5],color[10],color[11],color[5]);
-                        interpolatePoints(latLng[14],latLng[6],latLng[12],color[14],color[6],color[12]);
-                        interpolatePoints(latLng[12],latLng[6],latLng[8],color[12],color[6],color[8]);
-                        interpolatePoints(latLng[8],latLng[12],latLng[2],color[8],color[12],color[2]);
-//                        interpolatePoints(latLng[3],latLng[12],latLng[3],color[3],color[12],color[3]);
-                        interpolatePoints(latLng[3],latLng[12],latLng[15],color[3],color[12],color[15]);
-                        interpolatePoints(latLng[15],latLng[3],latLng[7],color[15],color[3],color[7]);
-                        interpolatePoints(latLng[15],latLng[7],latLng[1],color[15],color[7],color[1]);
-                        interpolatePoints(latLng[1],latLng[15],latLng[9],color[1],color[15],color[9]);
-                        interpolatePoints(latLng[9],latLng[4],latLng[1],color[9],color[4],color[1]);
-                        interpolatePoints(latLng[5],latLng[9],latLng[4],color[5],color[9],color[4]);
-                        interpolatePoints(latLng[11],latLng[5],latLng[15],color[11],color[5],color[15]);
-                        interpolatePoints(latLng[15],latLng[11],latLng[12],color[15],color[11],color[12]);
-                        interpolatePoints(latLng[12],latLng[3],latLng[2],color[12],color[3],color[2]);
-                        interpolatePoints(latLng[10],latLng[5],latLng[4],color[10],color[5],color[4]);
-                        interpolatePoints(latLng[15],latLng[5],latLng[9],color[15],color[5],color[9]);
-                        interpolatePoints(latLng[11],latLng[12],latLng[10],color[11],color[12],color[10]);
-                        interpolatePoints(latLng[10],latLng[12],latLng[14],color[10],color[12],color[14]);
+                                    node1[i] = regions.Node1;
+                                    node2[i] = regions.Node2;
+                                    node3[i] = regions.Node3;
+                                    interpolatePoints(latLng[node1[i]],latLng[node2[i]],latLng[node3[i]],color[node1[i]],color[node2[i]],color[node3[i]]);
+                                    i++;
+                                }
+//                                interpolatePoints(latLng[10],latLng[11],latLng[5],color[10],color[11],color[5]);
+//                                interpolatePoints(latLng[14],latLng[6],latLng[12],color[14],color[6],color[12]);
+//                                interpolatePoints(latLng[12],latLng[6],latLng[8],color[12],color[6],color[8]);
+//                                interpolatePoints(latLng[8],latLng[12],latLng[2],color[8],color[12],color[2]);
+////                        interpolatePoints(latLng[3],latLng[12],latLng[3],color[3],color[12],color[3]);
+//                                interpolatePoints(latLng[3],latLng[12],latLng[15],color[3],color[12],color[15]);
+//                                interpolatePoints(latLng[15],latLng[3],latLng[7],color[15],color[3],color[7]);
+//                                interpolatePoints(latLng[15],latLng[7],latLng[1],color[15],color[7],color[1]);
+//                                interpolatePoints(latLng[1],latLng[15],latLng[9],color[1],color[15],color[9]);
+//                                interpolatePoints(latLng[9],latLng[4],latLng[1],color[9],color[4],color[1]);
+//                                interpolatePoints(latLng[5],latLng[9],latLng[4],color[5],color[9],color[4]);
+//                                interpolatePoints(latLng[11],latLng[5],latLng[15],color[11],color[5],color[15]);
+//                                interpolatePoints(latLng[15],latLng[11],latLng[12],color[15],color[11],color[12]);
+//                                interpolatePoints(latLng[12],latLng[3],latLng[2],color[12],color[3],color[2]);
+//                                interpolatePoints(latLng[10],latLng[5],latLng[4],color[10],color[5],color[4]);
+//                                interpolatePoints(latLng[15],latLng[5],latLng[9],color[15],color[5],color[9]);
+//                                interpolatePoints(latLng[11],latLng[12],latLng[10],color[11],color[12],color[10]);
+//                                interpolatePoints(latLng[10],latLng[12],latLng[14],color[10],color[12],color[14]);
+
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }});
 
 
                     }
@@ -486,28 +507,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
 
 
-        FirebaseDatabase.getInstance().getReference().child("Regions").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Integer i = 1;
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Regions regions = snapshot.getValue(Regions.class);
-                    System.out.println(i + " Node1 -> " + regions.Node1);
-                    System.out.println(i + " Node2 -> " + regions.Node2);
-                    System.out.println(i + " Node3 -> " + regions.Node3);
 
-                    node1[i] = regions.Node1;
-                    node2[i] = regions.Node2;
-                    node3[i] = regions.Node3;
-
-                    i++;
-                }
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }});
 
 
 
