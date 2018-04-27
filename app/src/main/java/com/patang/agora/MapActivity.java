@@ -31,6 +31,11 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 
@@ -83,6 +88,18 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     private HeatmapTileProvider mProvider;
     private TileOverlay mOverlay;
 
+    Double lat[] = new Double[17];
+    Double lng[] = new Double[17];
+    Double temp[] = new Double[17];
+    Double alpha[] = new Double[17];
+    LatLng latLng[] = new LatLng[17];
+    int color[] = new int[17];
+    int databaseAccess = 0;
+    private DatabaseReference mDatabase;
+    int node1[] = new int[50];
+    int node2[] = new int[50];
+    int node3[] = new int[50];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +108,82 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        ////////////////////////////
+//        firebasePopulateLatLng();
+//        firebasePopulateTempAlpha();
+        //////////////////////////
+
+//        System.out.println("Lats : ");
+//        for (int i = 0; i < lat.length; i++){
+//            System.out.println(i + " -> " + lat[i]);
+//        }
+
+
+
+    }
+
+    public void firebasePopulateLatLng(){
+        FirebaseDatabase.getInstance().getReference().child("Sensor")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Integer i = 0;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Sensor sensor = snapshot.getValue(Sensor.class);
+                            System.out.println(sensor.Latitude);
+                            System.out.println(sensor.Longitude);
+                            lat[i] = sensor.Latitude;
+                            lng[i] = sensor.Longitude;
+
+                            i++;
+                        }
+
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+    public void firebasePopulateTempAlpha(){
+        FirebaseDatabase.getInstance().getReference().child("Reading").child("Temperature")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Integer i = 0;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            for(DataSnapshot snap : snapshot.getChildren()){
+                                Reading reading = snap.getValue(Reading.class);
+                                System.out.print("alpha :");
+                                System.out.println(reading.alpha);
+                                System.out.print("reading :");
+                                System.out.println(reading.Reading);
+                                System.out.println("  ");
+                                alpha[i] = reading.alpha;
+                                temp[i] = reading.Reading;
+                            }
+                            i++;
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+
+
+    public int getColorFromReading(double temp, double alpha){
+        if (temp > 30 && temp < 40) {
+            return Color.argb((int)alpha * 255, 255, 255, 0);
+        } else if (temp > 40){
+            return Color.argb((int)alpha * 255, 255, 0, 0);
+        } else {
+            return Color.argb((int)alpha * 255, 0, 255, 0);
+        }
     }
 
     @Override
@@ -226,46 +319,45 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
 
         int color1  = Color.argb(255,255,0,0);
-        int color2  = Color.argb(255,255,0,0);
+        int color2  = Color.argb(0,255,0,0);
         int color3  = Color.argb(255,255,0,0);
-        int color4  = Color.argb(255,255,0,0);
+        int color4  = Color.argb(0,255,0,0);
         int color5  = Color.argb(255,255,0,0);
-        int color6  = Color.argb(255,255,0,0);
+        int color6  = Color.argb(0,255,0,0);
         int color7  = Color.argb(255,255,0,0);
-        int color8  = Color.argb(255,255,0,0);
+        int color8  = Color.argb(0,255,0,0);
         int color9  = Color.argb(255,255,0,0);
-        int color10  = Color.argb(255,255,0,0);
+        int color10  = Color.argb(0,255,0,0);
         int color11  = Color.argb(255,255,0,0);
-        int color12  = Color.argb(255,0,255,0);
+        int color12  = Color.argb(0,0,255,0);
         int color13  = Color.argb(255,0,255,0);
-        int color14  = Color.argb(255,255,0,0);
+        int color14  = Color.argb(0,255,0,0);
         int color15  = Color.argb(255,0,255,0);
-        int color16  = Color.argb(255,255,255,0);
+        int color16  = Color.argb(0,255,255,0);
 
 //        double longitude
 
-
-        mMap.addMarker(new MarkerOptions().position(p1).title("Pos: 1, Lat: " + p1.latitude + ", Lng: " + p1.longitude));
-        mMap.addMarker(new MarkerOptions().position(p2).title("Pos: 2, Lat: " + p2.latitude + ", Lng: " + p2.longitude));
-        mMap.addMarker(new MarkerOptions().position(p3).title("Pos: 3, Lat: " + p3.latitude + ", Lng: " + p3.longitude));
-        mMap.addMarker(new MarkerOptions().position(p11).title("Pos: 11, Lat: " + p11.latitude + ", Lng: " + p11.longitude));
-        mMap.addMarker(new MarkerOptions().position(p10).title("Pos: 10, Lat: " + p10.latitude + ", Lng: " + p10.longitude));
-        mMap.addMarker(new MarkerOptions().position(p5).title("Pos: 5, Lat: " + p5.latitude + ", Lng: " + p5.longitude));
-        mMap.addMarker(new MarkerOptions().position(p15).title("Pos: 15, Lat: " + p15.latitude + ", Lng: " + p15.longitude));
-        mMap.addMarker(new MarkerOptions().position(p13).title("Pos: 13, Lat: " + p13.latitude + ", Lng: " + p13.longitude));
-        mMap.addMarker(new MarkerOptions().position(p8).title("Pos: 8, Lat: " + p8.latitude + ", Lng: " + p8.longitude));
-        mMap.addMarker(new MarkerOptions().position(p4).title("Pos: 4, Lat: " + p4.latitude + ", Lng: " + p4.longitude));
-        mMap.addMarker(new MarkerOptions().position(p6).title("Pos: 6, Lat: " + p6.latitude + ", Lng: " + p6.longitude));
-        mMap.addMarker(new MarkerOptions().position(p14).title("Pos: 14, Lat: " + p14.latitude + ", Lng: " + p14.longitude));
-        mMap.addMarker(new MarkerOptions().position(p7).title("Pos: 7, Lat: " + p7.latitude + ", Lng: " + p7.longitude));
-        mMap.addMarker(new MarkerOptions().position(p9).title("Pos: 9, Lat: " + p9.latitude + ", Lng: " + p9.longitude));
-        mMap.addMarker(new MarkerOptions().position(p12).title("Pos: 12, Lat: " + p12.latitude + ", Lng: " + p12.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p1).title("Pos: 1, Lat: " + p1.latitude + ", Lng: " + p1.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p2).title("Pos: 2, Lat: " + p2.latitude + ", Lng: " + p2.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p3).title("Pos: 3, Lat: " + p3.latitude + ", Lng: " + p3.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p11).title("Pos: 11, Lat: " + p11.latitude + ", Lng: " + p11.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p10).title("Pos: 10, Lat: " + p10.latitude + ", Lng: " + p10.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p5).title("Pos: 5, Lat: " + p5.latitude + ", Lng: " + p5.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p15).title("Pos: 15, Lat: " + p15.latitude + ", Lng: " + p15.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p13).title("Pos: 13, Lat: " + p13.latitude + ", Lng: " + p13.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p8).title("Pos: 8, Lat: " + p8.latitude + ", Lng: " + p8.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p4).title("Pos: 4, Lat: " + p4.latitude + ", Lng: " + p4.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p6).title("Pos: 6, Lat: " + p6.latitude + ", Lng: " + p6.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p14).title("Pos: 14, Lat: " + p14.latitude + ", Lng: " + p14.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p7).title("Pos: 7, Lat: " + p7.latitude + ", Lng: " + p7.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p9).title("Pos: 9, Lat: " + p9.latitude + ", Lng: " + p9.longitude));
+//        mMap.addMarker(new MarkerOptions().position(p12).title("Pos: 12, Lat: " + p12.latitude + ", Lng: " + p12.longitude));
 
 //
 //        interpolatePoints(p1,p2,p3,tempToColor(40, 255),tempToColor(60, 255),tempToColor(-9, 255));
 //        interpolatePoints(p5,p2,p3,color6,color2,color3);
 //        interpolatePoints(p1,p10,p3,color1,color5,color3);
-
+//
         interpolatePoints(p10,p11,p5,color10,color11,color5);
         interpolatePoints(p14,p6,p12,color14,color6,color12);
         interpolatePoints(p12,p6,p8,color12,color6,color8);
@@ -285,197 +377,161 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         interpolatePoints(p11,p12,p10,color11,color12,color10);
         interpolatePoints(p10,p12,p14,color10,color12,color14);
 
+///////////////////////////////////////////////////////////////////////////////////
+//
+
+        color[1]  = Color.argb(255,255,0,0);
+        color[2]  = Color.argb(255,255,0,0);
+        color[3]  = Color.argb(255,255,0,0);
+        color[4]  = Color.argb(255,255,0,0);
+        color[5]  = Color.argb(255,255,0,0);
+        color[6]  = Color.argb(255,255,0,0);
+        color[7]  = Color.argb(255,255,0,0);
+        color[8]  = Color.argb(255,255,0,0);
+        color[9]  = Color.argb(255,255,0,0);
+        color[10]  = Color.argb(255,255,0,0);
+        color[11]  = Color.argb(255,255,0,0);
+        color[12]  = Color.argb(255,0,255,0);
+        color[13]  = Color.argb(255,0,255,0);
+        color[14]  = Color.argb(255,255,0,0);
+        color[15]  = Color.argb(255,0,255,0);
+        color[16]  = Color.argb(255,255,255,0);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Reading").child("Temperature").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                databaseAccess = 1;
+                Integer i = 1;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    for(DataSnapshot snap : snapshot.getChildren()){
+                        Reading reading = snap.getValue(Reading.class);
+                        System.out.println(i + " alpha :" + reading.alpha);
+                        System.out.println(i + " reading :" + reading.Reading);
+                        alpha[i] = reading.alpha;
+                        temp[i] = reading.Reading;
+                    }
+                    i++;
+                }
+                for (int j = 1; j < temp.length - 1; j++) {
+                    color[j] = getColorFromReading(temp[j],alpha[j]);
+                }
+                databaseAccess = 2;
+
+
+                FirebaseDatabase.getInstance().getReference().child("Sensor").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Integer i = 1;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Sensor sensor = snapshot.getValue(Sensor.class);
+                            System.out.println(i + " lat -> " + sensor.Latitude);
+                            System.out.println(i + " lng -> " + sensor.Longitude);
+                            lat[i] = sensor.Latitude;
+                            lng[i] = sensor.Longitude;
+                            latLng[i] = new LatLng(sensor.Latitude,sensor.Longitude);
+                            i++;
+                        }
+
+                        for (int j = 1; j < latLng.length - 1; j++) {
+                            mMap.addMarker(new MarkerOptions().position(latLng[j]).title("Pos: " + j + ", Lat: " + latLng[j].latitude + ", Lng: " + latLng[j].longitude));
+                        }
+
+                        mMap.clear();
+
+                        interpolatePoints(latLng[10],latLng[11],latLng[5],color[10],color[11],color[5]);
+                        interpolatePoints(latLng[14],latLng[6],latLng[12],color[14],color[6],color[12]);
+                        interpolatePoints(latLng[12],latLng[6],latLng[8],color[12],color[6],color[8]);
+                        interpolatePoints(latLng[8],latLng[12],latLng[2],color[8],color[12],color[2]);
+//                        interpolatePoints(latLng[3],latLng[12],latLng[3],color[3],color[12],color[3]);
+                        interpolatePoints(latLng[3],latLng[12],latLng[15],color[3],color[12],color[15]);
+                        interpolatePoints(latLng[15],latLng[3],latLng[7],color[15],color[3],color[7]);
+                        interpolatePoints(latLng[15],latLng[7],latLng[1],color[15],color[7],color[1]);
+                        interpolatePoints(latLng[1],latLng[15],latLng[9],color[1],color[15],color[9]);
+                        interpolatePoints(latLng[9],latLng[4],latLng[1],color[9],color[4],color[1]);
+                        interpolatePoints(latLng[5],latLng[9],latLng[4],color[5],color[9],color[4]);
+                        interpolatePoints(latLng[11],latLng[5],latLng[15],color[11],color[5],color[15]);
+                        interpolatePoints(latLng[15],latLng[11],latLng[12],color[15],color[11],color[12]);
+                        interpolatePoints(latLng[12],latLng[3],latLng[2],color[12],color[3],color[2]);
+                        interpolatePoints(latLng[10],latLng[5],latLng[4],color[10],color[5],color[4]);
+                        interpolatePoints(latLng[15],latLng[5],latLng[9],color[15],color[5],color[9]);
+                        interpolatePoints(latLng[11],latLng[12],latLng[10],color[11],color[12],color[10]);
+                        interpolatePoints(latLng[10],latLng[12],latLng[14],color[10],color[12],color[14]);
+
+
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }});
+
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        FirebaseDatabase.getInstance().getReference().child("Regions").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Integer i = 1;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Regions regions = snapshot.getValue(Regions.class);
+                    System.out.println(i + " Node1 -> " + regions.Node1);
+                    System.out.println(i + " Node2 -> " + regions.Node2);
+                    System.out.println(i + " Node3 -> " + regions.Node3);
+
+                    node1[i] = regions.Node1;
+                    node2[i] = regions.Node2;
+                    node3[i] = regions.Node3;
+
+                    i++;
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     }
-
-
-
-    private void addHeatMap() {
-//        List<LatLng> list = null;
-
-        ArrayList<WeightedLatLng> list = new ArrayList<WeightedLatLng>();
-        for (double i = 0; i < 10; i++) {
-            double lat = 31.5204 + (i * 0.01);
-            double lng = 74.3587 + (i * 0.01);
-            LatLng a = new LatLng(lat,lng);
-            WeightedLatLng b = new WeightedLatLng(a, 0.1);
-            list.add(b);
-
-            mProvider = new HeatmapTileProvider.Builder().weightedData(list).radius((int)(50-(i * 0.10))).build();
-            mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-        }
-
-        // Create a heat map tile provider, passing it the latlngs of the police stations.
-//        mProvider = new HeatmapTileProvider.Builder().weightedData(list).build();
-
-
-        // Add a tile overlay to the map, using the heat map tile provider.
-    }
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
-//
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//        Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
-//        Log.d(TAG, "onMapReady: map is ready");
-//        mMap = googleMap;
-//
-//        if (mLocationPermissionsGranted) {
-//            getDeviceLocation();
-//
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-//                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            mMap.setMyLocationEnabled(true);
-//            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-//
-//        }
-//    }
-//
-//    private static final String TAG = "MapActivity";
-//
-//    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-//    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-//    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-//    private static final float DEFAULT_ZOOM = 15f;
-//
-//    //vars
-//    private Boolean mLocationPermissionsGranted = false;
-//    private GoogleMap mMap;
-//    private FusedLocationProviderClient mFusedLocationProviderClient;
-//
-//    @Override
-//    protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_map);
-//
-//        getLocationPermission();
-//    }
-//
-//    private void getDeviceLocation(){
-//        Log.d(TAG, "getDeviceLocation: getting the devices current location");
-//
-//        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-//
-//        try{
-//            if(mLocationPermissionsGranted){
-//
-//                final Task location = mFusedLocationProviderClient.getLastLocation();
-//                location.addOnCompleteListener(new OnCompleteListener() {
-//                    @Override
-//                    public void onComplete(@NonNull Task task) {
-//                        if(task.isSuccessful()){
-//                            Log.d(TAG, "onComplete: found location!");
-//                            Location currentLocation = (Location) task.getResult();
-//
-//                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-//                                    DEFAULT_ZOOM);
-//
-//                        }else{
-//                            Log.d(TAG, "onComplete: current location is null");
-//                            Toast.makeText(MapActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//            }
-//        }catch (SecurityException e){
-//            Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage() );
-//        }
-//    }
-//
-//    private void moveCamera(LatLng latLng, float zoom){
-//        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-//    }
-//
-//    private void initMap(){
-//        Log.d(TAG, "initMap: initializing map");
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-//
-//        mapFragment.getMapAsync(MapActivity.this);
-//    }
-//
-//    private void getLocationPermission(){
-//        Log.d(TAG, "getLocationPermission: getting location permissions");
-//        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
-//                Manifest.permission.ACCESS_COARSE_LOCATION};
-//
-//        if(ContextCompat.checkSelfPermission(this.getApplicationContext(),
-//                FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-//            if(ContextCompat.checkSelfPermission(this.getApplicationContext(),
-//                    COURSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-//                mLocationPermissionsGranted = true;
-//                initMap();
-//            }else{
-//                ActivityCompat.requestPermissions(this,
-//                        permissions,
-//                        LOCATION_PERMISSION_REQUEST_CODE);
-//            }
-//        }else{
-//            ActivityCompat.requestPermissions(this,
-//                    permissions,
-//                    LOCATION_PERMISSION_REQUEST_CODE);
-//        }
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        Log.d(TAG, "onRequestPermissionsResult: called.");
-//        mLocationPermissionsGranted = false;
-//
-//        switch(requestCode){
-//            case LOCATION_PERMISSION_REQUEST_CODE:{
-//                if(grantResults.length > 0){
-//                    for(int i = 0; i < grantResults.length; i++){
-//                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
-//                            mLocationPermissionsGranted = false;
-//                            Log.d(TAG, "onRequestPermissionsResult: permission failed");
-//                            return;
-//                        }
-//                    }
-//                    Log.d(TAG, "onRequestPermissionsResult: permission granted");
-//                    mLocationPermissionsGranted = true;
-//                    //initialize our map
-//                    initMap();
-//                }
-//            }
-//        }
-//    }
-//
-//
-//}
