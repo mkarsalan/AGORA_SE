@@ -15,6 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -92,18 +95,57 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     Double temp[] = new Double[500];
     Double alpha[] = new Double[500];
     LatLng latLng[] = new LatLng[500];
+    Graph tempGraph[] = new Graph[500];
+    Graph humidityGraph[] = new Graph[500];
     int color[] = new int[500];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        getGraphData();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
+    public void getGraphData(){
+        FirebaseDatabase.getInstance().getReference().child("Graph").child("Temperature").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int i = 1;
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Graph graph = snapshot.getValue(Graph.class);
+                    tempGraph[i] = graph;
+                    i++;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference().child("Graph").child("Humidity").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int i = 1;
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Graph graph = snapshot.getValue(Graph.class);
+                    humidityGraph[i] = graph;
+                    i++;
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     public int getColorFromReading(double temp, double alpha){
         if (temp > 30 && temp < 40) {
@@ -189,6 +231,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap.addGroundOverlay(groundOverlayOptions);
     }
 
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json);
@@ -199,6 +243,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         LatLng p15 = new LatLng(31.5204, 74.3587);
         mMap.addMarker(new MarkerOptions().position(p15).title("p15"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p15,12.0f));
+
+
+
+
+
 
 //        LatLng p1 = new LatLng(31.4704, 74.4108);
 //        LatLng p2 = new LatLng(31.5799, 74.3561);
@@ -337,6 +386,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
             }
         });
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
