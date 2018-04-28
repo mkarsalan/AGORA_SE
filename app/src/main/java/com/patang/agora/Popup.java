@@ -1,9 +1,8 @@
 package com.patang.agora;
-import android.app.Activity;
+
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -15,11 +14,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-
 import java.util.ArrayList;
 
-public class Database extends FragmentActivity {
+/**
+ * Created by Saad Jamal on 28-Apr-18.
+ */
 
+public class Popup extends MapActivity {
     private static final String TAG = "MainActivity";
     private LineChart mChart;
     private Drawable gradientDrawable;
@@ -32,13 +33,20 @@ public class Database extends FragmentActivity {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Graph graph = snapshot.getValue(Graph.class);
                             setContentView(R.layout.activity_database);
                             int temp1 = graph.hour01;
                             //int array[24] =
                             mChart = findViewById(R.id.Linechart);
+                        //popup stuff
+                            DisplayMetrics dm = new DisplayMetrics();
+                            getWindowManager().getDefaultDisplay().getMetrics(dm);
+                            int width = (int)(0.7*dm.widthPixels);
+                            int height = (int)(0.3*dm.heightPixels);
 
+                             getWindow().setLayout(width,height);
+                        //
                             mChart.setDragEnabled(true);
                             mChart.setScaleEnabled(false);
 
@@ -95,51 +103,5 @@ public class Database extends FragmentActivity {
                 });
 
 
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_database);
-//
-//        mChart = (LineChart) findViewById(R.id.linechart);
-//
-//        mChart.setDragEnabled(true);
-//        mChart.setScaleEnabled(false);
-//
-//        ArrayList<Entry> yValues = new ArrayList<>();
-//
-//        yValues.add(new Entry(0, 60f));
-//        yValues.add(new Entry(1, 50f));
-//        yValues.add(new Entry(2, 70f));
-//        yValues.add(new Entry(3, 30f));
-//        yValues.add(new Entry(4, 50f));
-//        yValues.add(new Entry(5, 60f));
-//        yValues.add(new Entry(5, 65f));
-//
-//        LineDataSet set1 = new LineDataSet(yValues, "Data Set");
-//        set1.setFillAlpha(110);
-//        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-//        dataSets.add(set1);
-//
-//        LineData data = new LineData(dataSets);
-//
-//        mChart.setData(data);
-//
-//    }
-//
-//    private LineChart mChart;
 }

@@ -12,9 +12,15 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -30,6 +36,7 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
@@ -85,8 +92,59 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowCloseListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowLongClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.view.View;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewFlipper;
+
+
+public class MapActivity extends FragmentActivity implements  OnMarkerClickListener, OnMapReadyCallback{
+
+    // variables for popup window
+    private Marker mMarker;
+    private PopupWindow mPopupWindow;
+    private int mWidth;
+    private int mHeight;
+    //______________________________________
+
 
     private GoogleMap mMap;
 
@@ -231,7 +289,111 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap.addGroundOverlay(groundOverlayOptions);
     }
 
+    /** Called when the user clicks a marker. */
 
+    public boolean onMarkerClick(final Marker marker) {
+
+        Toast.makeText(this,
+                marker.getTitle() +
+                        " has been clicked ",
+                Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(MapActivity.this, Popup.class));
+
+        //maybe later https://stackoverflow.com/questions/31990322/popup-or-layout-over-marker-android?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+//        View mainView = getLayoutInflater().inflate(R.layout.default_marker_info_window, null);
+//        ViewFlipper markerInfoContainer = (ViewFlipper)mainView.findViewById(R.id.markerInfoContainer);
+//        View viewContainer = getLayoutInflater().inflate(R.layout.default_marker_info_layout, null);
+//        TextView tvTitulo = (TextView) viewContainer.findViewById(R.id.tvTitulo);
+//        TextView tvCuerpo = (TextView) viewContainer.findViewById(R.id.tvCuerpo);
+//        tvTitulo.setText(marker.getTitle());
+//        tvCuerpo.setVisibility(View.GONE);
+//
+//        markerInfoContainer.addView(viewContainer);
+//
+//        PopupWindow popupWindow = new PopupWindow(mainView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        popupWindow.showAtLocation(findViewById(R.id.map), Gravity.CENTER_HORIZONTAL, 0, 0); //map is the fragment on the activity layout where I put the map
+
+//    FirebaseDatabase.getInstance().getReference().child("Graph").child("Temperature")
+//        .addValueEventListener(new ValueEventListener() {
+//            LineChart mChart;
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+//                    Graph graph = snapshot.getValue(Graph.class);
+//                    setContentView(R.layout.activity_database);
+//                    int temp1 = graph.hour01;
+//                    //int array[24] =
+//
+//                    mChart = findViewById(R.id.Linechart);
+//                    // popup stuff
+//                    DisplayMetrics dm = new DisplayMetrics();
+//                    getWindowManager().getDefaultDisplay().getMetrics(dm);
+//                    int width = (int)(0.3*dm.widthPixels);
+//                    int height = (int)(0.3*dm.heightPixels);
+//
+//                    getWindow().setLayout(width,height);
+//                    //
+//
+//                    mChart.setDragEnabled(true);
+//                    mChart.setScaleEnabled(false);
+//
+//                    ArrayList<Entry> yValues = new ArrayList<>();
+//
+//                    yValues.add(new Entry(1, graph.hour01));
+//                    yValues.add(new Entry(2, graph.hour02));
+//                    yValues.add(new Entry(3, graph.hour03));
+//                    yValues.add(new Entry(4, graph.hour04));
+//                    yValues.add(new Entry(5, graph.hour05));
+//                    yValues.add(new Entry(6, graph.hour06));
+//                    yValues.add(new Entry(7, graph.hour07));
+//                    yValues.add(new Entry(8, graph.hour08));
+//                    yValues.add(new Entry(9, graph.hour09));
+//                    yValues.add(new Entry(10, graph.hour10));
+//                    yValues.add(new Entry(11, graph.hour11));
+//                    yValues.add(new Entry(12, graph.hour12));
+//                    yValues.add(new Entry(13, graph.hour13));
+//                    yValues.add(new Entry(14, graph.hour14));
+//                    yValues.add(new Entry(15, graph.hour15));
+//                    yValues.add(new Entry(16, graph.hour17));
+//                    yValues.add(new Entry(17, graph.hour17));
+//                    yValues.add(new Entry(18, graph.hour18));
+//                    yValues.add(new Entry(19, graph.hour19));
+//                    yValues.add(new Entry(20, graph.hour20));
+//                    yValues.add(new Entry(21, graph.hour21));
+//                    yValues.add(new Entry(22, graph.hour22));
+//                    yValues.add(new Entry(23, graph.hour23));
+//                    yValues.add(new Entry(24, graph.hour24));
+//                    LineDataSet set1 = new LineDataSet(yValues, "Data Set 1");
+//
+//                    set1.setFillAlpha(110);
+//                    ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+//
+//                    dataSets.add(set1);
+//                    LineData data = new LineData(dataSets);
+//                    set1.setDrawFilled(true);
+//                    set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+//                    //set1.setDrawValues(false);
+//                    set1.setFillAlpha(255);
+//                    set1.setDrawCircles(false);
+//                    //set1.setFillColor(16010050);
+//                    //set1.setFillColor(7401417);
+//                    // set1.setFillDrawable(gradientDrawable);
+//
+//                    mChart.setData(data);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+
+        // Return false to indicate that we have not consumed the event and that we wish
+        // for the default behavior to occur (which is for the camera to move such that the
+        // marker is centered and for the marker's info window to open, if it has one).
+        return false;
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -241,11 +403,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap = googleMap;
 
         LatLng p15 = new LatLng(31.5204, 74.3587);
-        mMap.addMarker(new MarkerOptions().position(p15).title("p15"));
+//        mMap.addMarker(new MarkerOptions().position(p15).title("p15"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p15,12.0f));
-
-
-
 
 
 
@@ -396,7 +555,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
 
 
-
+        // Set a listener for marker click.
+        mMap.setOnMarkerClickListener(this);
 
 
 

@@ -32,7 +32,10 @@
             android:name=".SignUp"
             android:label="@string/title_activity_sign_up"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Database" />
+        <activity android:name=".Database"> </activity>
+        <activity android:name=".Popup"
+            android:theme = "@style/AppTheme.Popup"
+            > </activity>
         <activity android:name=".Heatmap" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
