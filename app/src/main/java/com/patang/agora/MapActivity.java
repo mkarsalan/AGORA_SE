@@ -1,5 +1,6 @@
 package com.patang.agora;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -85,20 +86,13 @@ import java.util.Scanner;
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private HeatmapTileProvider mProvider;
-    private TileOverlay mOverlay;
 
-    Double lat[] = new Double[17];
-    Double lng[] = new Double[17];
-    Double temp[] = new Double[17];
-    Double alpha[] = new Double[17];
-    LatLng latLng[] = new LatLng[17];
-    int color[] = new int[17];
-    int databaseAccess = 0;
-    private DatabaseReference mDatabase;
-    int node1[] = new int[50];
-    int node2[] = new int[50];
-    int node3[] = new int[50];
+    Double lat[] = new Double[500];
+    Double lng[] = new Double[500];
+    Double temp[] = new Double[500];
+    Double alpha[] = new Double[500];
+    LatLng latLng[] = new LatLng[500];
+    int color[] = new int[500];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,72 +102,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
-        ////////////////////////////
-//        firebasePopulateLatLng();
-//        firebasePopulateTempAlpha();
-        //////////////////////////
-
-//        System.out.println("Lats : ");
-//        for (int i = 0; i < lat.length; i++){
-//            System.out.println(i + " -> " + lat[i]);
-//        }
-
-
-
     }
-
-    public void firebasePopulateLatLng(){
-        FirebaseDatabase.getInstance().getReference().child("Sensor")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Integer i = 0;
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Sensor sensor = snapshot.getValue(Sensor.class);
-                            System.out.println(sensor.Latitude);
-                            System.out.println(sensor.Longitude);
-                            lat[i] = sensor.Latitude;
-                            lng[i] = sensor.Longitude;
-
-                            i++;
-                        }
-
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-    }
-    public void firebasePopulateTempAlpha(){
-        FirebaseDatabase.getInstance().getReference().child("Reading").child("Temperature")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Integer i = 0;
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            for(DataSnapshot snap : snapshot.getChildren()){
-                                Reading reading = snap.getValue(Reading.class);
-                                System.out.print("alpha :");
-                                System.out.println(reading.alpha);
-                                System.out.print("reading :");
-                                System.out.println(reading.Reading);
-                                System.out.println("  ");
-                                alpha[i] = reading.alpha;
-                                temp[i] = reading.Reading;
-                            }
-                            i++;
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-    }
-
 
 
     public int getColorFromReading(double temp, double alpha){
@@ -188,7 +117,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
     @Override
     public void onBackPressed(){
-
+        Intent a = new Intent(Intent.ACTION_MAIN);
+        a.addCategory(Intent.CATEGORY_HOME);
+        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(a);
     }
 
     public void interpolatePoints(LatLng p1, LatLng p2, LatLng p3, int color1, int color2, int color3){
@@ -257,19 +189,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap.addGroundOverlay(groundOverlayOptions);
     }
 
-    public int tempToColor(double temp, int alpha){
-        int min = -10;
-        int max = 60;
-        max = max - min;
-
-        int c = (int)( ((temp - min)*255) / (double)max );
-        int colour  = Color.argb(alpha,c,c,c);
-
-
-        return colour;
-
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json);
@@ -277,147 +196,101 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
         LatLng p15 = new LatLng(31.5204, 74.3587);
         mMap.addMarker(new MarkerOptions().position(p15).title("p15"));
-
-//        addHeatMap();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p15,12.0f));
 
-
-//        1.	LUMS 31.4704 74.4108
-//        2.	UET  31.5799 74.3561
-//        3.	Royal plam 31.5578 74.3624
-//        4.	Jinnah hospital 31.4845 74.2974
-//        5.	Thokar 31.4711 74.24192
-//        6.	faisal town 31.476 74.3045
-//        7.	sozo water park 33.8898 73.4318
-//        8.	Wagah 31.604948 74.572325
-//        9.	Shadbagh 31.6001 74.3397
-//        10.	kot lak pat 31.4626 74.3309
-//        11.	p15 forte 31.5879 74.3151
-//        12.	Data Darbar 31.579 74.3058
-//        13.	Garrison gold club 31.5402 74.3954
-//        14.	Model Town 31.4777 74.3294
-//        15.	Ichra 31.5351 74.3206
-
-        LatLng p1 = new LatLng(31.4704, 74.4108);
-        LatLng p2 = new LatLng(31.5799, 74.3561);
-        LatLng p3 = new LatLng(31.5578, 74.3624);
-        LatLng p11 = new LatLng(31.4845, 74.2974);
-        LatLng p10 = new LatLng(31.4711, 74.24192);
-        LatLng p5 = new LatLng(31.476, 74.3045);
-//        LatLng p15 = new LatLng(33.8898, 73.4318);
-        LatLng p13 = new LatLng(31.604948, 74.572325);
-        LatLng p8 = new LatLng(31.6001, 74.3397);
-        LatLng p4 = new LatLng(31.4626, 74.3309);
-        LatLng p6 = new LatLng(31.5879, 74.3151);
-        LatLng p14 = new LatLng(31.579, 74.3058);
-        LatLng p7 = new LatLng(31.5402, 74.3954);
-        LatLng p9 = new LatLng(31.4777, 74.3294);
-        LatLng p12 = new LatLng(31.5351, 74.3206);
+//        LatLng p1 = new LatLng(31.4704, 74.4108);
+//        LatLng p2 = new LatLng(31.5799, 74.3561);
+//        LatLng p3 = new LatLng(31.5578, 74.3624);
+//        LatLng p11 = new LatLng(31.4845, 74.2974);
+//        LatLng p10 = new LatLng(31.4711, 74.24192);
+//        LatLng p5 = new LatLng(31.476, 74.3045);
+////        LatLng p15 = new LatLng(33.8898, 73.4318);
+//        LatLng p13 = new LatLng(31.604948, 74.572325);
+//        LatLng p8 = new LatLng(31.6001, 74.3397);
+//        LatLng p4 = new LatLng(31.4626, 74.3309);
+//        LatLng p6 = new LatLng(31.5879, 74.3151);
+//        LatLng p14 = new LatLng(31.579, 74.3058);
+//        LatLng p7 = new LatLng(31.5402, 74.3954);
+//        LatLng p9 = new LatLng(31.4777, 74.3294);
+//        LatLng p12 = new LatLng(31.5351, 74.3206);
 
 
-        int color1  = Color.argb(255,255,0,0);
-        int color2  = Color.argb(0,255,0,0);
-        int color3  = Color.argb(255,255,0,0);
-        int color4  = Color.argb(0,255,0,0);
-        int color5  = Color.argb(255,255,0,0);
-        int color6  = Color.argb(0,255,0,0);
-        int color7  = Color.argb(255,255,0,0);
-        int color8  = Color.argb(0,255,0,0);
-        int color9  = Color.argb(255,255,0,0);
-        int color10  = Color.argb(0,255,0,0);
-        int color11  = Color.argb(255,255,0,0);
-        int color12  = Color.argb(0,0,255,0);
-        int color13  = Color.argb(255,0,255,0);
-        int color14  = Color.argb(0,255,0,0);
-        int color15  = Color.argb(255,0,255,0);
-        int color16  = Color.argb(0,255,255,0);
-
-//        double longitude
-
-//        mMap.addMarker(new MarkerOptions().position(p1).title("Pos: 1, Lat: " + p1.latitude + ", Lng: " + p1.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p2).title("Pos: 2, Lat: " + p2.latitude + ", Lng: " + p2.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p3).title("Pos: 3, Lat: " + p3.latitude + ", Lng: " + p3.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p11).title("Pos: 11, Lat: " + p11.latitude + ", Lng: " + p11.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p10).title("Pos: 10, Lat: " + p10.latitude + ", Lng: " + p10.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p5).title("Pos: 5, Lat: " + p5.latitude + ", Lng: " + p5.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p15).title("Pos: 15, Lat: " + p15.latitude + ", Lng: " + p15.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p13).title("Pos: 13, Lat: " + p13.latitude + ", Lng: " + p13.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p8).title("Pos: 8, Lat: " + p8.latitude + ", Lng: " + p8.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p4).title("Pos: 4, Lat: " + p4.latitude + ", Lng: " + p4.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p6).title("Pos: 6, Lat: " + p6.latitude + ", Lng: " + p6.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p14).title("Pos: 14, Lat: " + p14.latitude + ", Lng: " + p14.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p7).title("Pos: 7, Lat: " + p7.latitude + ", Lng: " + p7.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p9).title("Pos: 9, Lat: " + p9.latitude + ", Lng: " + p9.longitude));
-//        mMap.addMarker(new MarkerOptions().position(p12).title("Pos: 12, Lat: " + p12.latitude + ", Lng: " + p12.longitude));
+//        int color1  = Color.argb(255,255,0,0);
+//        int color2  = Color.argb(0,255,0,0);
+//        int color3  = Color.argb(255,255,0,0);
+//        int color4  = Color.argb(0,255,0,0);
+//        int color5  = Color.argb(255,255,0,0);
+//        int color6  = Color.argb(0,255,0,0);
+//        int color7  = Color.argb(255,255,0,0);
+//        int color8  = Color.argb(0,255,0,0);
+//        int color9  = Color.argb(255,255,0,0);
+//        int color10  = Color.argb(0,255,0,0);
+//        int color11  = Color.argb(255,255,0,0);
+//        int color12  = Color.argb(0,0,255,0);
+//        int color13  = Color.argb(255,0,255,0);
+//        int color14  = Color.argb(0,255,0,0);
+//        int color15  = Color.argb(255,0,255,0);
+//        int color16  = Color.argb(0,255,255,0);
 
 //
-//        interpolatePoints(p1,p2,p3,tempToColor(40, 255),tempToColor(60, 255),tempToColor(-9, 255));
-//        interpolatePoints(p5,p2,p3,color6,color2,color3);
-//        interpolatePoints(p1,p10,p3,color1,color5,color3);
-//
-        interpolatePoints(p10,p11,p5,color10,color11,color5);
-        interpolatePoints(p14,p6,p12,color14,color6,color12);
-        interpolatePoints(p12,p6,p8,color12,color6,color8);
-        interpolatePoints(p8,p12,p2,color8,color12,color2);
-        interpolatePoints(p3,p12,p3,color3,color12,color3);
-        interpolatePoints(p3,p12,p15,color3,color12,color15);
-        interpolatePoints(p15,p3,p7,color15,color3,color7);
-        interpolatePoints(p15,p7,p1,color15,color7,color1);
-        interpolatePoints(p1,p15,p9,color1,color15,color9);
-        interpolatePoints(p9,p4,p1,color9,color4,color1);
-        interpolatePoints(p5,p9,p4,color5,color9,color4);
-        interpolatePoints(p11,p5,p15,color11,color5,color15);
-        interpolatePoints(p15,p11,p12,color15,color11,color12);
-        interpolatePoints(p12,p3,p2,color12,color3,color2);
-        interpolatePoints(p10,p5,p4,color10,color5,color4);
-        interpolatePoints(p15,p5,p9,color15,color5,color9);
-        interpolatePoints(p11,p12,p10,color11,color12,color10);
-        interpolatePoints(p10,p12,p14,color10,color12,color14);
+//        interpolatePoints(p10,p11,p5,color10,color11,color5);
+//        interpolatePoints(p14,p6,p12,color14,color6,color12);
+//        interpolatePoints(p12,p6,p8,color12,color6,color8);
+//        interpolatePoints(p8,p12,p2,color8,color12,color2);
+//        interpolatePoints(p3,p12,p3,color3,color12,color3);
+//        interpolatePoints(p3,p12,p15,color3,color12,color15);
+//        interpolatePoints(p15,p3,p7,color15,color3,color7);
+//        interpolatePoints(p15,p7,p1,color15,color7,color1);
+//        interpolatePoints(p1,p15,p9,color1,color15,color9);
+//        interpolatePoints(p9,p4,p1,color9,color4,color1);
+//        interpolatePoints(p5,p9,p4,color5,color9,color4);
+//        interpolatePoints(p11,p5,p15,color11,color5,color15);
+//        interpolatePoints(p15,p11,p12,color15,color11,color12);
+//        interpolatePoints(p12,p3,p2,color12,color3,color2);
+//        interpolatePoints(p10,p5,p4,color10,color5,color4);
+//        interpolatePoints(p15,p5,p9,color15,color5,color9);
+//        interpolatePoints(p11,p12,p10,color11,color12,color10);
+//        interpolatePoints(p10,p12,p14,color10,color12,color14);
 
-///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 
-        color[1]  = Color.argb(255,255,0,0);
-        color[2]  = Color.argb(255,255,0,0);
-        color[3]  = Color.argb(255,255,0,0);
-        color[4]  = Color.argb(255,255,0,0);
-        color[5]  = Color.argb(255,255,0,0);
-        color[6]  = Color.argb(255,255,0,0);
-        color[7]  = Color.argb(255,255,0,0);
-        color[8]  = Color.argb(255,255,0,0);
-        color[9]  = Color.argb(255,255,0,0);
-        color[10]  = Color.argb(255,255,0,0);
-        color[11]  = Color.argb(255,255,0,0);
-        color[12]  = Color.argb(255,0,255,0);
-        color[13]  = Color.argb(255,0,255,0);
-        color[14]  = Color.argb(255,255,0,0);
-        color[15]  = Color.argb(255,0,255,0);
-        color[16]  = Color.argb(255,255,255,0);
+//        color[1]  = Color.argb(255,255,0,0);
+//        color[2]  = Color.argb(255,255,0,0);
+//        color[3]  = Color.argb(255,255,0,0);
+//        color[4]  = Color.argb(255,255,0,0);
+//        color[5]  = Color.argb(255,255,0,0);
+//        color[6]  = Color.argb(255,255,0,0);
+//        color[7]  = Color.argb(255,255,0,0);
+//        color[8]  = Color.argb(255,255,0,0);
+//        color[9]  = Color.argb(255,255,0,0);
+//        color[10]  = Color.argb(255,255,0,0);
+//        color[11]  = Color.argb(255,255,0,0);
+//        color[12]  = Color.argb(255,0,255,0);
+//        color[13]  = Color.argb(255,0,255,0);
+//        color[14]  = Color.argb(255,255,0,0);
+//        color[15]  = Color.argb(255,0,255,0);
+//        color[16]  = Color.argb(255,255,255,0);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Reading").child("Temperature").addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("Reading").child("Temperature").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                databaseAccess = 1;
                 Integer i = 1;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     for(DataSnapshot snap : snapshot.getChildren()){
                         Reading reading = snap.getValue(Reading.class);
-                        System.out.println(i + " alpha :" + reading.alpha);
-                        System.out.println(i + " reading :" + reading.Reading);
+//                        System.out.println(i + " alpha :" + reading.alpha);
+//                        System.out.println(i + " reading :" + reading.Reading);
                         alpha[i] = reading.alpha;
                         temp[i] = reading.Reading;
                     }
                     i++;
                 }
-                for (int j = 1; j < temp.length - 1; j++) {
+                for (int j = 1; j < i; j++) {
                     color[j] = getColorFromReading(temp[j],alpha[j]);
                 }
-                databaseAccess = 2;
-
 
                 FirebaseDatabase.getInstance().getReference().child("Sensor").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -425,8 +298,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         Integer i = 1;
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Sensor sensor = snapshot.getValue(Sensor.class);
-                            System.out.println(i + " lat -> " + sensor.Latitude);
-                            System.out.println(i + " lng -> " + sensor.Longitude);
+//                            System.out.println(i + " lat -> " + sensor.Latitude);
+//                            System.out.println(i + " lng -> " + sensor.Longitude);
                             lat[i] = sensor.Latitude;
                             lng[i] = sensor.Longitude;
                             latLng[i] = new LatLng(sensor.Latitude,sensor.Longitude);
@@ -434,59 +307,30 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         }
 
                         mMap.clear();
-                        for (int j = 1; j < latLng.length - 1; j++) {
+                        for (int j = 1; j < i; j++) {
                             mMap.addMarker(new MarkerOptions().position(latLng[j]).title("Pos: " + j + ", Lat: " + latLng[j].latitude + ", Lng: " + latLng[j].longitude));
                         }
 
                         FirebaseDatabase.getInstance().getReference().child("Regions").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                Integer i = 1;
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     Regions regions = snapshot.getValue(Regions.class);
-                                    System.out.println(i + " Node1 -> " + regions.Node1);
-                                    System.out.println(i + " Node2 -> " + regions.Node2);
-                                    System.out.println(i + " Node3 -> " + regions.Node3);
-
-                                    node1[i] = regions.Node1;
-                                    node2[i] = regions.Node2;
-                                    node3[i] = regions.Node3;
-                                    interpolatePoints(latLng[node1[i]],latLng[node2[i]],latLng[node3[i]],color[node1[i]],color[node2[i]],color[node3[i]]);
-                                    i++;
+//                                    System.out.println(i + " Node1 -> " + regions.Node1);
+//                                    System.out.println(i + " Node2 -> " + regions.Node2);
+//                                    System.out.println(i + " Node3 -> " + regions.Node3);
+                                    interpolatePoints(latLng[regions.Node1],latLng[regions.Node2],latLng[regions.Node3],color[regions.Node1],color[regions.Node2],color[regions.Node3]);
                                 }
-//                                interpolatePoints(latLng[10],latLng[11],latLng[5],color[10],color[11],color[5]);
-//                                interpolatePoints(latLng[14],latLng[6],latLng[12],color[14],color[6],color[12]);
-//                                interpolatePoints(latLng[12],latLng[6],latLng[8],color[12],color[6],color[8]);
-//                                interpolatePoints(latLng[8],latLng[12],latLng[2],color[8],color[12],color[2]);
-////                        interpolatePoints(latLng[3],latLng[12],latLng[3],color[3],color[12],color[3]);
-//                                interpolatePoints(latLng[3],latLng[12],latLng[15],color[3],color[12],color[15]);
-//                                interpolatePoints(latLng[15],latLng[3],latLng[7],color[15],color[3],color[7]);
-//                                interpolatePoints(latLng[15],latLng[7],latLng[1],color[15],color[7],color[1]);
-//                                interpolatePoints(latLng[1],latLng[15],latLng[9],color[1],color[15],color[9]);
-//                                interpolatePoints(latLng[9],latLng[4],latLng[1],color[9],color[4],color[1]);
-//                                interpolatePoints(latLng[5],latLng[9],latLng[4],color[5],color[9],color[4]);
-//                                interpolatePoints(latLng[11],latLng[5],latLng[15],color[11],color[5],color[15]);
-//                                interpolatePoints(latLng[15],latLng[11],latLng[12],color[15],color[11],color[12]);
-//                                interpolatePoints(latLng[12],latLng[3],latLng[2],color[12],color[3],color[2]);
-//                                interpolatePoints(latLng[10],latLng[5],latLng[4],color[10],color[5],color[4]);
-//                                interpolatePoints(latLng[15],latLng[5],latLng[9],color[15],color[5],color[9]);
-//                                interpolatePoints(latLng[11],latLng[12],latLng[10],color[11],color[12],color[10]);
-//                                interpolatePoints(latLng[10],latLng[12],latLng[14],color[10],color[12],color[14]);
-
                             }
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
 
                             }});
-
-
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
                     }});
-
-
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -494,7 +338,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             }
         });
 
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
