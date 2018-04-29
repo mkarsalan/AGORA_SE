@@ -504,7 +504,10 @@ public class MapActivity extends FragmentActivity implements  OnMarkerClickListe
                         mMap.clear();
                         for (int j = 1; j < i; j++) {
 //                            mMap.addMarker(new MarkerOptions().position(latLng[j]).title("Pos: " + j + ", Lat: " + latLng[j].latitude + ", Lng: " + latLng[j].longitude));
-                            mMap.addMarker(new MarkerOptions().position(latLng[j]).title(String.valueOf(j)));
+
+                            MarkerOptions mo = new MarkerOptions().position(latLng[j]).title(String.valueOf(j));
+                            //mo.icon(BitmapDescriptorFactory.fromResource(R.drawable.target));
+                            mMap.addMarker(mo);
 
                         }
 
