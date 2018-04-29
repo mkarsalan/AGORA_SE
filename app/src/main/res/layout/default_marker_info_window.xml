@@ -9,14 +9,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/markerInfoContainer"
         android:background="@android:color/holo_red_dark"
-        android:maxWidth="250dp">
+        android:maxWidth="750dp">
     </ViewFlipper>
 
-    <ImageView
-        android:layout_width="20dp"
-        android:layout_height="15dp"
-        android:layout_gravity="center|top" />
-        <!--android:background="@drawable/ic_down_arrow"-->
+    <!--<ImageView-->
+        <!--android:layout_width="20dp"-->
+        <!--android:layout_height="15dp"-->
+        <!--android:layout_gravity="center|top" />-->
+        <!--&lt;!&ndash;android:background="@drawable/ic_down_arrow"&ndash;&gt;-->
 
 
 </LinearLayout>

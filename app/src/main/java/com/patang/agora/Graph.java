@@ -30,6 +30,8 @@ public class Graph
     public int hour22;
     public int hour23;
     public int hour24;
+
+
     public Graph(){
 
     }

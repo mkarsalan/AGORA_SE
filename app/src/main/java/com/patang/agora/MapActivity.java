@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,8 +14,11 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Explode;
+import android.transition.Transition;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
@@ -294,103 +298,83 @@ public class MapActivity extends FragmentActivity implements  OnMarkerClickListe
 
     public boolean onMarkerClick(final Marker marker) {
         int temp = Integer.parseInt(marker.getTitle());
-        tempGraph[2] = tempGraph[temp];
-        startActivity(new Intent(MapActivity.this, Popup.class), ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+        System.out.println("temp -> " + temp);
+        Intent I = new Intent(MapActivity.this, Popup.class);
+        Bundle b = new Bundle();
+        int[] tempArr = new int[25];
+        tempArr[1] = tempGraph[temp].hour01;
+        tempArr[2] = tempGraph[temp].hour02;
+        tempArr[3] = tempGraph[temp].hour03;
+        tempArr[4] = tempGraph[temp].hour04;
+        tempArr[5] = tempGraph[temp].hour05;
+        tempArr[6] = tempGraph[temp].hour06;
+        tempArr[7] = tempGraph[temp].hour07;
+        tempArr[8] = tempGraph[temp].hour08;
+        tempArr[9] = tempGraph[temp].hour09;
+        tempArr[10] = tempGraph[temp].hour10;
+        tempArr[11] = tempGraph[temp].hour11;
+        tempArr[12] = tempGraph[temp].hour12;
+        tempArr[13] = tempGraph[temp].hour13;
+        tempArr[14] = tempGraph[temp].hour14;
+        tempArr[15] = tempGraph[temp].hour15;
+        tempArr[16] = tempGraph[temp].hour16;
+        tempArr[17] = tempGraph[temp].hour17;
+        tempArr[18] = tempGraph[temp].hour18;
+        tempArr[19] = tempGraph[temp].hour19;
+        tempArr[20] = tempGraph[temp].hour20;
+        tempArr[21] = tempGraph[temp].hour21;
+        tempArr[22] = tempGraph[temp].hour22;
+        tempArr[23] = tempGraph[temp].hour23;
+        tempArr[24] = tempGraph[temp].hour24;
 
-//         Toast.makeText(this,
-//                marker.getTitle() +
-//                        " has been clicked ",
-//                Toast.LENGTH_SHORT).show();
+        b.putIntArray("tempArr",tempArr);
+        I.putExtras(b);
 
-//        maybe later https://stackoverflow.com/questions/31990322/popup-or-layout-over-marker-android?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-//        View mainView = getLayoutInflater().inflate(R.layout.default_marker_info_window, null);
-//        ViewFlipper markerInfoContainer = (ViewFlipper)mainView.findViewById(R.id.markerInfoContainer);
-//        View viewContainer = getLayoutInflater().inflate(R.layout.default_marker_info_layout, null);
-//        TextView tvTitulo = (TextView) viewContainer.findViewById(R.id.tvTitulo);
-//        TextView tvCuerpo = (TextView) viewContainer.findViewById(R.id.tvCuerpo);
-//        tvTitulo.setText(marker.getTitle());
-//        tvCuerpo.setVisibility(View.GONE);
+//
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = (int)(0*dm.widthPixels);
+        int height = (int)(0.21*dm.heightPixels);
+        View mainView = getLayoutInflater().inflate(R.layout.activity_database, null);
 
-//        markerInfoContainer.addView(viewContainer);
+        PopupWindow popupWindow = new PopupWindow(mainView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,true);
+        popupWindow.showAtLocation(findViewById(R.id.map), Gravity.CENTER_HORIZONTAL, width, height); //map is the fragment on the activity layout where I put the map
+        Explode e = new Explode();
+//        popupWindow.setEnterTransition(e);
+//        popupWindow.setExitTransition(e);
 
-//        PopupWindow popupWindow = new PopupWindow(mainView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        popupWindow.showAtLocation(findViewById(R.id.map), Gravity.CENTER_HORIZONTAL, 0, 0); //map is the fragment on the activity layout where I put the map
+        LineChart mChart = mainView.findViewById(R.id.Linechart);
 
-//    FirebaseDatabase.getInstance().getReference().child("Graph").child("Temperature")
-//        .addValueEventListener(new ValueEventListener() {
-//            LineChart mChart;
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-//                    Graph graph = snapshot.getValue(Graph.class);
-//                    setContentView(R.layout.activity_database);
-//                    int temp1 = graph.hour01;
-//                    //int array[24] =
-//
-//                    mChart = findViewById(R.id.Linechart);
-//                    // popup stuff
-//                    DisplayMetrics dm = new DisplayMetrics();
-//                    getWindowManager().getDefaultDisplay().getMetrics(dm);
-//                    int width = (int)(0.3*dm.widthPixels);
-//                    int height = (int)(0.3*dm.heightPixels);
-//
-//                    getWindow().setLayout(width,height);
-//                    //
-//
-//                    mChart.setDragEnabled(true);
-//                    mChart.setScaleEnabled(false);
-//
-//                    ArrayList<Entry> yValues = new ArrayList<>();
-//
-//                    yValues.add(new Entry(1, graph.hour01));
-//                    yValues.add(new Entry(2, graph.hour02));
-//                    yValues.add(new Entry(3, graph.hour03));
-//                    yValues.add(new Entry(4, graph.hour04));
-//                    yValues.add(new Entry(5, graph.hour05));
-//                    yValues.add(new Entry(6, graph.hour06));
-//                    yValues.add(new Entry(7, graph.hour07));
-//                    yValues.add(new Entry(8, graph.hour08));
-//                    yValues.add(new Entry(9, graph.hour09));
-//                    yValues.add(new Entry(10, graph.hour10));
-//                    yValues.add(new Entry(11, graph.hour11));
-//                    yValues.add(new Entry(12, graph.hour12));
-//                    yValues.add(new Entry(13, graph.hour13));
-//                    yValues.add(new Entry(14, graph.hour14));
-//                    yValues.add(new Entry(15, graph.hour15));
-//                    yValues.add(new Entry(16, graph.hour17));
-//                    yValues.add(new Entry(17, graph.hour17));
-//                    yValues.add(new Entry(18, graph.hour18));
-//                    yValues.add(new Entry(19, graph.hour19));
-//                    yValues.add(new Entry(20, graph.hour20));
-//                    yValues.add(new Entry(21, graph.hour21));
-//                    yValues.add(new Entry(22, graph.hour22));
-//                    yValues.add(new Entry(23, graph.hour23));
-//                    yValues.add(new Entry(24, graph.hour24));
-//                    LineDataSet set1 = new LineDataSet(yValues, "Data Set 1");
-//
-//                    set1.setFillAlpha(110);
-//                    ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-//
-//                    dataSets.add(set1);
-//                    LineData data = new LineData(dataSets);
-//                    set1.setDrawFilled(true);
-//                    set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-//                    //set1.setDrawValues(false);
-//                    set1.setFillAlpha(255);
-//                    set1.setDrawCircles(false);
-//                    //set1.setFillColor(16010050);
-//                    //set1.setFillColor(7401417);
-//                    // set1.setFillDrawable(gradientDrawable);
-//
-//                    mChart.setData(data);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
+
+        mChart.setDragEnabled(true);
+        mChart.setScaleEnabled(false);
+
+        ArrayList<Entry> yValues = new ArrayList<>();
+        for(int i = 1; i<25;i++){
+            yValues.add(new Entry(i, tempArr[i]));
+        }
+        LineDataSet set1 = new LineDataSet(yValues, "");
+
+        set1.setFillAlpha(110);
+        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+
+        dataSets.add(set1);
+        LineData data = new LineData(dataSets);
+        set1.setDrawFilled(true);
+        set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        //set1.setDrawValues(false);
+        set1.setFillAlpha(150);
+        set1.setDrawCircles(false);
+        set1.setValueTextColor(Color.parseColor("#ffffff"));
+        set1.setColor(Color.parseColor("#ffffff"));
+
+
+        //set1.setFillColor(16010050);
+        set1.setFillColor(0x740141);
+        // set1.setFillDrawable(gradientDrawable);
+
+        mChart.setData(data);
+
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the
@@ -562,10 +546,11 @@ public class MapActivity extends FragmentActivity implements  OnMarkerClickListe
         mMap.setOnMarkerClickListener(this);
 
 
+//        mMap.OnCameraMoveListener(this);
 
-
-
-
+//        public abstract void onCameraMove (){}
+//        onCameraMove();
+//        onCameraMoveStarted();
 
 
 
