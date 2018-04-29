@@ -5,4 +5,7 @@
     <color name="white">#ffffff</color>
     <color name="colorAccent">#FF4081</color>
     <color name="darkgray">#6c6c6c</color>
+    <color name="transparentgrey">#80000000</color>
+    <color name="transparent">#00000000</color>
+
 </resources>

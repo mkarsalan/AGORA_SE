@@ -1,5 +1,6 @@
 package com.patang.agora;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -153,8 +154,8 @@ public class MapActivity extends FragmentActivity implements  OnMarkerClickListe
     Double temp[] = new Double[500];
     Double alpha[] = new Double[500];
     LatLng latLng[] = new LatLng[500];
-    Graph tempGraph[] = new Graph[500];
-    Graph humidityGraph[] = new Graph[500];
+    Graph tempGraph[] = new Graph[500];//
+    Graph humidityGraph[] = new Graph[500];//
     int color[] = new int[500];
 
     @Override
@@ -292,14 +293,16 @@ public class MapActivity extends FragmentActivity implements  OnMarkerClickListe
     /** Called when the user clicks a marker. */
 
     public boolean onMarkerClick(final Marker marker) {
+        int temp = Integer.parseInt(marker.getTitle());
+        tempGraph[2] = tempGraph[temp];
+        startActivity(new Intent(MapActivity.this, Popup.class), ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
 
-        Toast.makeText(this,
-                marker.getTitle() +
-                        " has been clicked ",
-                Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(MapActivity.this, Popup.class));
+//         Toast.makeText(this,
+//                marker.getTitle() +
+//                        " has been clicked ",
+//                Toast.LENGTH_SHORT).show();
 
-        //maybe later https://stackoverflow.com/questions/31990322/popup-or-layout-over-marker-android?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+//        maybe later https://stackoverflow.com/questions/31990322/popup-or-layout-over-marker-android?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 //        View mainView = getLayoutInflater().inflate(R.layout.default_marker_info_window, null);
 //        ViewFlipper markerInfoContainer = (ViewFlipper)mainView.findViewById(R.id.markerInfoContainer);
 //        View viewContainer = getLayoutInflater().inflate(R.layout.default_marker_info_layout, null);
@@ -307,9 +310,9 @@ public class MapActivity extends FragmentActivity implements  OnMarkerClickListe
 //        TextView tvCuerpo = (TextView) viewContainer.findViewById(R.id.tvCuerpo);
 //        tvTitulo.setText(marker.getTitle());
 //        tvCuerpo.setVisibility(View.GONE);
-//
+
 //        markerInfoContainer.addView(viewContainer);
-//
+
 //        PopupWindow popupWindow = new PopupWindow(mainView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 //        popupWindow.showAtLocation(findViewById(R.id.map), Gravity.CENTER_HORIZONTAL, 0, 0); //map is the fragment on the activity layout where I put the map
 
@@ -516,8 +519,8 @@ public class MapActivity extends FragmentActivity implements  OnMarkerClickListe
 
                         mMap.clear();
                         for (int j = 1; j < i; j++) {
-                            mMap.addMarker(new MarkerOptions().position(latLng[j]).title("Pos: " + j + ", Lat: " + latLng[j].latitude + ", Lng: " + latLng[j].longitude));
-//                            mMap.addMarker(new MarkerOptions().position(latLng[j]).title(String.valueOf(j)));
+//                            mMap.addMarker(new MarkerOptions().position(latLng[j]).title("Pos: " + j + ", Lat: " + latLng[j].latitude + ", Lng: " + latLng[j].longitude));
+                            mMap.addMarker(new MarkerOptions().position(latLng[j]).title(String.valueOf(j)));
 
                         }
 

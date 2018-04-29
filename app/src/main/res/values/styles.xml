@@ -20,6 +20,10 @@
     <style name="AppTheme.Popup">
         <item name = "android:windowIsTranslucent"> true </item>
         <item name = "android:windowCloseOnTouchOutside"> true </item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowEnterTransition">@android:transition/fade</item>
+        <item name="android:windowExitTransition">@android:transition/fade</item>
     </style>
 
 

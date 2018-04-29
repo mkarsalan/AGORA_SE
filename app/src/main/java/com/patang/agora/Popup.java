@@ -3,6 +3,11 @@ package com.patang.agora;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.View;
+import android.view.Window;
+import android.transition.Explode;
+import android.widget.RelativeLayout;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -28,24 +33,47 @@ public class Popup extends MapActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_database);
 
+
+        // inside your activity (if you did not enable transitions in your theme)
+        //getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+
+        // set an exit transition
+        getWindow().setExitTransition(new Explode());
         FirebaseDatabase.getInstance().getReference().child("Graph").child("Temperature")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Graph graph = snapshot.getValue(Graph.class);
-                            setContentView(R.layout.activity_database);
+
                             int temp1 = graph.hour01;
                             //int array[24] =
                             mChart = findViewById(R.id.Linechart);
                         //popup stuff
+                            // Now get a handle to any View contained
+                            // within the main layout you are using
+                            View LinechartView = findViewById(R.id.Linechart);
+//                            LinechartView.textCol;
+                            // Find the root view
+                            View root = LinechartView.getRootView();
+
+                            // Set the color
+                            //root.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
+
                             DisplayMetrics dm = new DisplayMetrics();
                             getWindowManager().getDefaultDisplay().getMetrics(dm);
                             int width = (int)(0.7*dm.widthPixels);
                             int height = (int)(0.3*dm.heightPixels);
 
-                             getWindow().setLayout(width,height);
+                            getWindow().setLayout(width,height);
+                            getWindow().getAttributes().verticalMargin = 0.19F;
+
+//                            RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams(width,height);
+//                            View imageView = findViewById(R.id.imageView);
+//                            imageView.requestLayout();
+//                            imageView.setLayoutParams(params);
                         //
                             mChart.setDragEnabled(true);
                             mChart.setScaleEnabled(false);
